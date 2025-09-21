@@ -1,0 +1,18 @@
+{
+  "items": [
+    {
+      "productId": 2,
+      "quantity": 1
+    }
+  ],
+  "freight": 10,
+  "paymentMethod": "boleto",
+  "cardData": {
+    "number": "string",
+    "name": "string",
+    "expiry": "string",
+    "cvv": "string"
+  },
+  "total": 200,
+  "valorFinal": 200
+}
