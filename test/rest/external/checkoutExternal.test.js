@@ -1,12 +1,11 @@
 const request = require('supertest');
-const sinon = require('sinon');
 const { expect } = require('chai');
-const app = require('../../../rest/app');
-const checkoutService = require('../../../src/services/checkoutService');
 
-describe('Testes de API Rest para checkout utilizando Controller', () => {
+const baseUrl = 'http://localhost:3000';
+
+describe('Testes de API Rest para checkout utilizando HTTP', () => {
     before(async () => {
-        const respostaLogin = await request(app)
+        const respostaLogin = await request(baseUrl)
             .post('/api/users/login')
             .send({
                 email: 'bob@email.com',
@@ -15,18 +14,13 @@ describe('Testes de API Rest para checkout utilizando Controller', () => {
         token = respostaLogin.body.token;
     });
 
-    afterEach(() => {
-        sinon.restore();
-    })
 
     const testesSucesso = require('../fixture/postCheckout.json');
 
     it(`Receber 200 ao realizar um checkout com sucesso`, async () => {
-        const respostaEsperada = require('../fixture/respostaPostChekout.json');
-        const checkoutServiceMock = sinon.stub(checkoutService, 'checkout');
-        checkoutServiceMock.returns(testesSucesso);
-
-        const resposta = await request(app)
+        const respostaEsperada = require('../fixture/respostaPostChekoutExternal.json');
+    
+        const resposta = await request(baseUrl)
             .post('/api/checkout')
             .set('Authorization', `Bearer ${token}`)
             .send(testesSucesso);
@@ -36,10 +30,8 @@ describe('Testes de API Rest para checkout utilizando Controller', () => {
     });
 
     it(`Receber 401 ao realizar uma requisição sem o token de autenticação`, async () => {
-        const checkoutServiceMock = sinon.stub(checkoutService, 'checkout');
-        checkoutServiceMock.throws(new Error('Token inválido'));
 
-        const resposta = await request(app)
+        const resposta = await request(baseUrl)
             .post('/api/checkout')
             .set('Authorization', `Token-invalido`)
             .send(testesSucesso);
